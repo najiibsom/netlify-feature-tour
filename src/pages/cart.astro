@@ -1,0 +1,498 @@
+---
+import Layout from '../components/layout.astro';
+---
+
+<Layout title="Shopping Cart - ShopLocal">
+  
+  <div class="cart-container">
+    <h1>🛒 Your Shopping Cart</h1>
+    
+    <div class="cart-content">
+      <div class="cart-items" id="cart-items">
+        <!-- Cart items will be loaded here -->
+      </div>
+      
+      <div class="cart-summary">
+        <div class="summary-card">
+          <h3>Order Summary</h3>
+          
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="subtotal">KES 0</span>
+          </div>
+          
+          <div class="summary-row">
+            <span>Delivery Fee:</span>
+            <span id="delivery-fee">KES 200</span>
+          </div>
+          
+          <div class="summary-row">
+            <span>Service Fee:</span>
+            <span id="service-fee">KES 50</span>
+          </div>
+          
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span id="total">KES 0</span>
+          </div>
+          
+          <div class="payment-options">
+            <h4>Payment Method</h4>
+            <div class="payment-method">
+              <input type="radio" id="mpesa" name="payment" value="mpesa" checked>
+              <label for="mpesa">📱 M-Pesa</label>
+            </div>
+            <div class="payment-method">
+              <input type="radio" id="card" name="payment" value="card">
+              <label for="card">💳 Credit/Debit Card</label>
+            </div>
+            <div class="payment-method">
+              <input type="radio" id="cod" name="payment" value="cod">
+              <label for="cod">💰 Cash on Delivery</label>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary btn-large checkout-btn" onclick="proceedToCheckout()">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="empty-cart" id="empty-cart" style="display: none;">
+      <div class="empty-cart-content">
+        <div class="empty-cart-icon">🛒</div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added any items to your cart yet.</p>
+        <a href="/products" class="btn btn-primary">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .cart-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .cart-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: var(--black);
+  }
+
+  .cart-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .cart-items {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cart-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-image {
+    width: 80px;
+    height: 80px;
+    background: var(--light-gray);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-right: 1rem;
+  }
+
+  .item-details {
+    flex: 1;
+  }
+
+  .item-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--black);
+  }
+
+  .item-seller {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-price {
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quantity-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .quantity-btn:hover {
+    background: var(--light-gray);
+  }
+
+  .quantity-display {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+  }
+
+  .remove-btn:hover {
+    background: var(--light-gray);
+    border-radius: 4px;
+  }
+
+  .cart-summary {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .summary-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .summary-card h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+  }
+
+  .summary-row.total {
+    border-top: 2px solid var(--border);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--black);
+  }
+
+  .payment-options {
+    margin: 1.5rem 0;
+  }
+
+  .payment-options h4 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .payment-method {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .payment-method input[type="radio"] {
+    margin: 0;
+  }
+
+  .payment-method label {
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .empty-cart {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .empty-cart-content {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .empty-cart-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .empty-cart h2 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .empty-cart p {
+    color: var(--gray);
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .cart-content {
+      grid-template-columns: 1fr;
+    }
+
+    .cart-summary {
+      position: static;
+    }
+
+    .cart-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .item-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>
+
+<script>
+  let cart = [];
+
+  // Load cart from localStorage
+  function loadCart() {
+    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    renderCart();
+    updateSummary();
+  }
+
+  // Render cart items
+  function renderCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const emptyCartDiv = document.getElementById('empty-cart');
+    const cartContent = document.querySelector('.cart-content');
+
+    if (cart.length === 0) {
+      cartContent.style.display = 'none';
+      emptyCartDiv.style.display = 'block';
+      return;
+    }
+
+    cartContent.style.display = 'grid';
+    emptyCartDiv.style.display = 'none';
+
+    cartItemsContainer.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <div class="item-image">${item.image}</div>
+        <div class="item-details">
+          <div class="item-title">${item.title}</div>
+          <div class="item-seller">by ${item.seller}</div>
+          <div class="item-price">${item.price}</div>
+        </div>
+        <div class="item-actions">
+          <div class="quantity-controls">
+            <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+            <span class="quantity-display">${item.quantity}</span>
+            <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+          </div>
+          <button class="remove-btn" onclick="removeFromCart(${item.id})" title="Remove item">
+            🗑️
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Update item quantity
+  function updateQuantity(itemId, change) {
+    const item = cart.find(item => item.id === itemId);
+    if (item) {
+      item.quantity += change;
+      if (item.quantity <= 0) {
+        removeFromCart(itemId);
+      } else {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+        updateSummary();
+        window.dispatchEvent(new Event('storage'));
+      }
+    }
+  }
+
+  // Remove item from cart
+  function removeFromCart(itemId) {
+    cart = cart.filter(item => item.id !== itemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+    updateSummary();
+    window.dispatchEvent(new Event('storage'));
+  }
+
+  // Update order summary
+  function updateSummary() {
+    const subtotal = cart.reduce((sum, item) => {
+      const price = parseFloat(item.price.replace('KES ', '').replace(',', ''));
+      return sum + (price * item.quantity);
+    }, 0);
+
+    const deliveryFee = cart.length > 0 ? 200 : 0;
+    const serviceFee = cart.length > 0 ? 50 : 0;
+    const total = subtotal + deliveryFee + serviceFee;
+
+    document.getElementById('subtotal').textContent = `KES ${subtotal.toLocaleString()}`;
+    document.getElementById('delivery-fee').textContent = `KES ${deliveryFee.toLocaleString()}`;
+    document.getElementById('service-fee').textContent = `KES ${serviceFee.toLocaleString()}`;
+    document.getElementById('total').textContent = `KES ${total.toLocaleString()}`;
+  }
+
+  // Proceed to checkout
+  function proceedToCheckout() {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    
+    if (paymentMethod === 'mpesa') {
+      initiateMPesaPayment();
+    } else if (paymentMethod === 'card') {
+      initiateCardPayment();
+    } else if (paymentMethod === 'cod') {
+      initiateCODOrder();
+    }
+  }
+
+  // M-Pesa payment process
+  function initiateMPesaPayment() {
+    const phoneNumber = prompt('Enter your M-Pesa phone number (07XXXXXXXX):');
+    
+    if (!phoneNumber) return;
+
+    // Validate phone number
+    if (!/^07\d{8}$/.test(phoneNumber)) {
+      alert('Please enter a valid M-Pesa phone number (07XXXXXXXX)');
+      return;
+    }
+
+    const total = document.getElementById('total').textContent;
+    
+    // Show loading state
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    checkoutBtn.textContent = 'Processing M-Pesa Payment...';
+    checkoutBtn.disabled = true;
+
+    // Simulate M-Pesa STK Push
+    setTimeout(() => {
+      alert(`📱 M-Pesa STK Push sent to ${phoneNumber}!\n\nPlease check your phone and enter your M-Pesa PIN to complete payment of ${total}.`);
+      
+      // Simulate payment completion
+      setTimeout(() => {
+        const paymentSuccess = confirm('Payment successful! Click OK to confirm your order.');
+        
+        if (paymentSuccess) {
+          completeOrder('mpesa', phoneNumber);
+        } else {
+          checkoutBtn.textContent = 'Proceed to Checkout';
+          checkoutBtn.disabled = false;
+        }
+      }, 3000);
+    }, 1000);
+  }
+
+  // Card payment process
+  function initiateCardPayment() {
+    alert('🚧 Card payment integration coming soon!\n\nFor now, please use M-Pesa or Cash on Delivery.');
+  }
+
+  // Cash on Delivery process
+  function initiateCODOrder() {
+    const deliveryAddress = prompt('Enter your delivery address:');
+    
+    if (!deliveryAddress) return;
+
+    if (confirm('Confirm Cash on Delivery order?\n\nYou will pay when the order is delivered.')) {
+      completeOrder('cod', deliveryAddress);
+    }
+  }
+
+  // Complete order
+  function completeOrder(paymentMethod, details) {
+    const orderData = {
+      id: Date.now(),
+      items: cart,
+      total: document.getElementById('total').textContent,
+      paymentMethod,
+      details,
+      status: 'confirmed',
+      date: new Date().toISOString()
+    };
+
+    // Save order to localStorage (in real app, this would be sent to server)
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.push(orderData);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Clear cart
+    cart = [];
+    localStorage.removeItem('cart');
+    window.dispatchEvent(new Event('storage'));
+
+    // Show success message
+    alert('✅ Order confirmed successfully!\n\nYou will receive SMS/WhatsApp confirmation shortly.');
+
+    // Redirect to order success page
+    window.location.href = '/order-success';
+  }
+
+  // Initialize cart on page load
+  document.addEventListener('DOMContentLoaded', loadCart);
+</script>

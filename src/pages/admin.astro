@@ -1,0 +1,774 @@
+---
+import Layout from '../components/layout.astro';
+---
+
+<Layout title="Admin Panel - ShopLocal">
+  
+  <div class="admin-container">
+    <h1>🛠️ Admin Panel</h1>
+    
+    <!-- Admin Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <h3 id="total-orders">0</h3>
+          <p>Total Orders</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <h3 id="total-revenue">KES 0</h3>
+          <p>Total Revenue</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📱</div>
+        <div class="stat-info">
+          <h3 id="mpesa-payments">0</h3>
+          <p>M-Pesa Payments</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-info">
+          <h3 id="pending-orders">0</h3>
+          <p>Pending Orders</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="admin-layout">
+      <!-- Sidebar Navigation -->
+      <div class="admin-sidebar">
+        <nav class="admin-nav">
+          <button class="nav-item active" onclick="switchAdminTab('orders')">
+            📦 Manage Orders
+          </button>
+          <button class="nav-item" onclick="switchAdminTab('payments')">
+            💳 M-Pesa Payments
+          </button>
+          <button class="nav-item" onclick="switchAdminTab('refunds')">
+            🔄 Refunds
+          </button>
+          <button class="nav-item" onclick="switchAdminTab('analytics')">
+            📊 Analytics
+          </button>
+          <button class="nav-item" onclick="switchAdminTab('settings')">
+            ⚙️ Settings
+          </button>
+        </nav>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="admin-content">
+        
+        <!-- Orders Management Tab -->
+        <div id="orders-tab" class="admin-tab-content active">
+          <h2>📦 Manage Orders</h2>
+          
+          <div class="orders-actions">
+            <button class="btn btn-primary" onclick="refreshOrders()">🔄 Refresh Orders</button>
+            <button class="btn btn-outline" onclick="exportOrders()">📥 Export Orders</button>
+          </div>
+          
+          <div class="orders-filters">
+            <select id="status-filter" onchange="filterOrdersByStatus()">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          
+          <div id="admin-orders-list" class="admin-orders-list">
+            <!-- Orders will be loaded here -->
+          </div>
+        </div>
+
+        <!-- M-Pesa Payments Tab -->
+        <div id="payments-tab" class="admin-tab-content">
+          <h2>💳 M-Pesa Payments</h2>
+          
+          <div class="payments-summary">
+            <div class="payment-card">
+              <h3>Today's M-Pesa Payments</h3>
+              <div class="payment-amount">KES 12,500</div>
+              <div class="payment-count">8 transactions</div>
+            </div>
+            <div class="payment-card">
+              <h3>This Week</h3>
+              <div class="payment-amount">KES 45,200</div>
+              <div class="payment-count">32 transactions</div>
+            </div>
+            <div class="payment-card">
+              <h3>This Month</h3>
+              <div class="payment-amount">KES 180,750</div>
+              <div class="payment-count">124 transactions</div>
+            </div>
+          </div>
+          
+          <div class="payments-actions">
+            <button class="btn btn-primary" onclick="reconcilePayments()">🔍 Reconcile Payments</button>
+            <button class="btn btn-outline" onclick="downloadPaymentReport()">📊 Download Report</button>
+          </div>
+          
+          <div id="payments-list" class="payments-list">
+            <!-- Payments will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Refunds Tab -->
+        <div id="refunds-tab" class="admin-tab-content">
+          <h2>🔄 Refunds Management</h2>
+          
+          <div class="refunds-actions">
+            <button class="btn btn-primary" onclick="processRefunds()">💰 Process Pending Refunds</button>
+            <button class="btn btn-outline" onclick="viewRefundPolicy()">📋 View Refund Policy</button>
+          </div>
+          
+          <div id="refunds-list" class="refunds-list">
+            <!-- Refunds will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="admin-tab-content">
+          <h2>📊 Analytics & Reports</h2>
+          
+          <div class="analytics-cards">
+            <div class="analytics-card">
+              <h3>Sales Overview</h3>
+              <div class="chart-placeholder">
+                📈 Sales chart would go here
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h3>Payment Methods</h3>
+              <div class="payment-methods-stats">
+                <div class="payment-stat">
+                  <span>📱 M-Pesa:</span>
+                  <span>75%</span>
+                </div>
+                <div class="payment-stat">
+                  <span>💰 COD:</span>
+                  <span>20%</span>
+                </div>
+                <div class="payment-stat">
+                  <span>💳 Card:</span>
+                  <span>5%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="reports-section">
+            <h3>Generate Reports</h3>
+            <div class="report-options">
+              <button class="btn btn-outline" onclick="generateSalesReport()">📊 Sales Report</button>
+              <button class="btn btn-outline" onclick="generatePaymentReport()">💳 Payment Report</button>
+              <button class="btn btn-outline" onclick="generateCustomerReport()">👥 Customer Report</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="admin-tab-content">
+          <h2>⚙️ System Settings</h2>
+          
+          <div class="settings-sections">
+            <div class="setting-section">
+              <h3>M-Pesa Configuration</h3>
+              <form class="settings-form">
+                <div class="form-group">
+                  <label>Business Short Code</label>
+                  <input type="text" value="174379" readonly>
+                </div>
+                <div class="form-group">
+                  <label>Consumer Key</label>
+                  <input type="password" value="••••••••••••••••">
+                </div>
+                <div class="form-group">
+                  <label>Consumer Secret</label>
+                  <input type="password" value="••••••••••••••••">
+                </div>
+                <div class="form-group">
+                  <label>Passkey</label>
+                  <input type="password" value="••••••••••••••••">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="updateMPesaConfig()">Update M-Pesa Config</button>
+              </form>
+            </div>
+            
+            <div class="setting-section">
+              <h3>Notification Settings</h3>
+              <form class="settings-form">
+                <div class="form-group">
+                  <label>SMS Gateway API Key</label>
+                  <input type="password" value="••••••••••••••••">
+                </div>
+                <div class="form-group">
+                  <label>WhatsApp Business API Token</label>
+                  <input type="password" value="••••••••••••••••">
+                </div>
+                <div class="form-group">
+                  <label>Email SMTP Settings</label>
+                  <input type="text" value="smtp.gmail.com:587">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="updateNotificationSettings()">Update Settings</button>
+              </form>
+            </div>
+            
+            <div class="setting-section">
+              <h3>System Maintenance</h3>
+              <div class="maintenance-actions">
+                <button class="btn btn-outline" onclick="clearCache()">🗑️ Clear Cache</button>
+                <button class="btn btn-outline" onclick="backupData()">💾 Backup Data</button>
+                <button class="btn btn-outline" onclick="viewSystemLogs()">📋 View System Logs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .admin-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: var(--black);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .stat-icon {
+    font-size: 2.5rem;
+    background: var(--primary);
+    color: var(--white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stat-info h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--black);
+  }
+
+  .stat-info p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  .admin-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+  }
+
+  .admin-sidebar {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-item {
+    background: none;
+    border: none;
+    padding: 1rem;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 1rem;
+    color: var(--black);
+  }
+
+  .nav-item:hover {
+    background: var(--light-gray);
+  }
+
+  .nav-item.active {
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .admin-content {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+  }
+
+  .admin-tab-content {
+    display: none;
+  }
+
+  .admin-tab-content.active {
+    display: block;
+  }
+
+  .admin-tab-content h2 {
+    margin-bottom: 1.5rem;
+    color: var(--black);
+  }
+
+  .orders-actions, .payments-actions, .refunds-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .orders-filters {
+    margin-bottom: 1.5rem;
+  }
+
+  .orders-filters select {
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .admin-order-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .order-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .status-dropdown {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  .payments-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .payment-card {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .payment-card h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .payment-amount {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .payment-count {
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  .payment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .payment-item:last-child {
+    border-bottom: none;
+  }
+
+  .analytics-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .analytics-card {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .analytics-card h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .chart-placeholder {
+    height: 200px;
+    background: var(--white);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+  }
+
+  .payment-methods-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .payment-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .reports-section {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .reports-section h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .report-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .settings-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .setting-section {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .setting-section h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-weight: 500;
+    color: var(--black);
+  }
+
+  .form-group input {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .maintenance-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .admin-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-sidebar {
+      position: static;
+    }
+
+    .admin-nav {
+      flex-direction: row;
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      white-space: nowrap;
+      min-width: 120px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .payments-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .analytics-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Tab switching functionality
+  function switchAdminTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.admin-tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // Remove active class from all nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    
+    // Add active class to clicked nav item
+    event.target.classList.add('active');
+    
+    // Load tab-specific content
+    loadAdminTabContent(tabName);
+  }
+
+  // Load tab-specific content
+  function loadAdminTabContent(tabName) {
+    switch(tabName) {
+      case 'orders':
+        loadAdminOrders();
+        break;
+      case 'payments':
+        loadPayments();
+        break;
+      case 'refunds':
+        loadRefunds();
+        break;
+    }
+  }
+
+  // Load admin orders
+  function loadAdminOrders() {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const ordersList = document.getElementById('admin-orders-list');
+    
+    if (orders.length === 0) {
+      ordersList.innerHTML = '<p>No orders found.</p>';
+      return;
+    }
+    
+    ordersList.innerHTML = orders.map(order => `
+      <div class="admin-order-item">
+        <div class="order-header">
+          <div>
+            <strong>Order #${order.id}</strong>
+            <span style="color: var(--gray); margin-left: 1rem;">
+              ${new Date(order.date).toLocaleDateString()}
+            </span>
+          </div>
+          <div class="order-actions">
+            <select class="status-dropdown" onchange="updateOrderStatus(${order.id}, this.value)">
+              <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+            <button class="btn btn-outline" onclick="viewOrderDetails(${order.id})">View Details</button>
+          </div>
+        </div>
+        <div class="order-details">
+          <p><strong>Total:</strong> ${order.total}</p>
+          <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+          <p><strong>Items:</strong> ${order.items.length} items</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Load payments
+  function loadPayments() {
+    const paymentsList = document.getElementById('payments-list');
+    const samplePayments = [
+      { date: '2024-01-15 14:30', order: '12345', amount: 'KES 2,750', phone: '254700123456', status: 'completed' },
+      { date: '2024-01-15 12:15', order: '12344', amount: 'KES 1,200', phone: '254700123457', status: 'completed' },
+      { date: '2024-01-15 10:45', order: '12343', amount: 'KES 3,500', phone: '254700123458', status: 'completed' }
+    ];
+    
+    paymentsList.innerHTML = samplePayments.map(payment => `
+      <div class="payment-item">
+        <div>
+          <div style="font-weight: 600;">Order #${payment.order}</div>
+          <div style="color: var(--gray); font-size: 0.9rem;">${payment.date}</div>
+          <div style="color: var(--gray); font-size: 0.9rem;">${payment.phone}</div>
+        </div>
+        <div>
+          <div style="font-weight: 600; color: var(--success);">${payment.amount}</div>
+          <div style="color: var(--success); font-size: 0.9rem;">✅ ${payment.status}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Load refunds
+  function loadRefunds() {
+    const refundsList = document.getElementById('refunds-list');
+    refundsList.innerHTML = '<p>No refund requests at the moment.</p>';
+  }
+
+  // Update order status
+  function updateOrderStatus(orderId, newStatus) {
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orderIndex = orders.findIndex(order => order.id === orderId);
+    
+    if (orderIndex !== -1) {
+      orders[orderIndex].status = newStatus;
+      localStorage.setItem('orders', JSON.stringify(orders));
+      
+      // Send notification to customer
+      alert(`✅ Order #${orderId} status updated to: ${newStatus}\n\nCustomer will be notified via SMS/WhatsApp.`);
+      
+      // Reload orders
+      loadAdminOrders();
+      updateStats();
+    }
+  }
+
+  // Admin functions
+  function refreshOrders() {
+    loadAdminOrders();
+    updateStats();
+    alert('✅ Orders refreshed successfully!');
+  }
+
+  function exportOrders() {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const csv = [
+      'Order ID,Date,Total,Payment Method,Status,Items Count',
+      ...orders.map(order => 
+        `${order.id},${order.date},${order.total},${order.paymentMethod},${order.status},${order.items.length}`
+      )
+    ].join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function reconcilePayments() {
+    alert('🔍 Payment reconciliation started...\n\nThis would connect to M-Pesa API to verify all payments.');
+  }
+
+  function downloadPaymentReport() {
+    alert('📊 Payment report generated and downloaded!');
+  }
+
+  function processRefunds() {
+    alert('💰 Processing pending refunds...\n\nRefunds will be sent to customers\' M-Pesa accounts.');
+  }
+
+  function updateMPesaConfig() {
+    alert('⚙️ M-Pesa configuration updated successfully!');
+  }
+
+  function updateNotificationSettings() {
+    alert('📱 Notification settings updated successfully!');
+  }
+
+  // Update stats
+  function updateStats() {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    
+    document.getElementById('total-orders').textContent = orders.length;
+    document.getElementById('pending-orders').textContent = orders.filter(o => o.status === 'pending').length;
+    document.getElementById('mpesa-payments').textContent = orders.filter(o => o.paymentMethod === 'mpesa').length;
+    
+    const totalRevenue = orders.reduce((sum, order) => {
+      const amount = parseFloat(order.total.replace('KES ', '').replace(',', ''));
+      return sum + amount;
+    }, 0);
+    
+    document.getElementById('total-revenue').textContent = `KES ${totalRevenue.toLocaleString()}`;
+  }
+
+  // Initialize admin panel
+  document.addEventListener('DOMContentLoaded', function() {
+    updateStats();
+    loadAdminTabContent('orders');
+  });
+</script>

@@ -1,0 +1,846 @@
+---
+import Layout from '../components/layout.astro';
+---
+
+<Layout title="My Account - ShopLocal">
+  
+  <div class="account-container">
+    <h1>👤 My Account</h1>
+    
+    <div class="account-layout">
+      <!-- Sidebar Navigation -->
+      <div class="account-sidebar">
+        <div class="user-info">
+          <div class="user-avatar">👤</div>
+          <div class="user-details">
+            <h3 id="user-name">John Doe</h3>
+            <p id="user-phone">+254 700 123 456</p>
+          </div>
+        </div>
+        
+        <nav class="account-nav">
+          <button class="nav-item active" onclick="switchTab('orders')">
+            📦 My Orders
+          </button>
+          <button class="nav-item" onclick="switchTab('wallet')">
+            💳 My Wallet
+          </button>
+          <button class="nav-item" onclick="switchTab('returns')">
+            🔄 Returns & Refunds
+          </button>
+          <button class="nav-item" onclick="switchTab('wishlist')">
+            ❤️ Wishlist
+          </button>
+          <button class="nav-item" onclick="switchTab('settings')">
+            ⚙️ Account Settings
+          </button>
+          <button class="nav-item" onclick="switchTab('support')">
+            💬 Support
+          </button>
+        </nav>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="account-content">
+        
+        <!-- My Orders Tab -->
+        <div id="orders-tab" class="tab-content active">
+          <h2>📦 My Orders</h2>
+          <div class="orders-filters">
+            <button class="filter-btn active" onclick="filterOrders('all')">All Orders</button>
+            <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterOrders('shipped')">Shipped</button>
+            <button class="filter-btn" onclick="filterOrders('delivered')">Delivered</button>
+            <button class="filter-btn" onclick="filterOrders('cancelled')">Cancelled</button>
+          </div>
+          <div id="orders-list" class="orders-list">
+            <!-- Orders will be loaded here -->
+          </div>
+        </div>
+
+        <!-- My Wallet Tab -->
+        <div id="wallet-tab" class="tab-content">
+          <h2>💳 My Wallet</h2>
+          <div class="wallet-summary">
+            <div class="wallet-card">
+              <h3>Wallet Balance</h3>
+              <div class="balance-amount">KES 1,250</div>
+              <div class="balance-actions">
+                <button class="btn btn-primary" onclick="topUpWallet()">Top Up</button>
+                <button class="btn btn-outline" onclick="withdrawFunds()">Withdraw</button>
+              </div>
+            </div>
+            <div class="wallet-card">
+              <h3>M-Pesa Linked</h3>
+              <div class="mpesa-number">+254 700 123 456</div>
+              <button class="btn btn-outline" onclick="updateMPesaNumber()">Update Number</button>
+            </div>
+          </div>
+          <div class="transactions-section">
+            <h3>Recent Transactions</h3>
+            <div id="transactions-list" class="transactions-list">
+              <!-- Transactions will be loaded here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Returns & Refunds Tab -->
+        <div id="returns-tab" class="tab-content">
+          <h2>🔄 Returns & Refunds</h2>
+          <div class="returns-actions">
+            <button class="btn btn-primary" onclick="initiateReturn()">🔄 Return an Item</button>
+            <button class="btn btn-outline" onclick="trackReturn()">📍 Track Return</button>
+          </div>
+          <div id="returns-list" class="returns-list">
+            <!-- Returns will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Wishlist Tab -->
+        <div id="wishlist-tab" class="tab-content">
+          <h2>❤️ My Wishlist</h2>
+          <div class="wishlist-actions">
+            <button class="btn btn-outline" onclick="shareWishlist()">📤 Share Wishlist</button>
+            <button class="btn btn-outline" onclick="clearWishlist()">🗑️ Clear All</button>
+          </div>
+          <div id="wishlist-items" class="wishlist-grid">
+            <!-- Wishlist items will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Account Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+          <h2>⚙️ Account Settings</h2>
+          <div class="settings-sections">
+            <div class="settings-section">
+              <h3>Personal Information</h3>
+              <form class="settings-form">
+                <div class="form-group">
+                  <label>Full Name</label>
+                  <input type="text" id="settings-name" value="John Doe">
+                </div>
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" id="settings-email" value="john@example.com">
+                </div>
+                <div class="form-group">
+                  <label>Phone Number</label>
+                  <input type="tel" id="settings-phone" value="+254 700 123 456">
+                </div>
+                <div class="form-group">
+                  <label>Delivery Address</label>
+                  <textarea id="settings-address" rows="3">123 Main Street, Nairobi, Kenya</textarea>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="savePersonalInfo()">Save Changes</button>
+              </form>
+            </div>
+            
+            <div class="settings-section">
+              <h3>Security</h3>
+              <form class="settings-form">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input type="password" id="current-password">
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" id="new-password">
+                </div>
+                <div class="form-group">
+                  <label>Confirm New Password</label>
+                  <input type="password" id="confirm-password">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button>
+              </form>
+            </div>
+            
+            <div class="settings-section">
+              <h3>Notifications</h3>
+              <div class="notification-settings">
+                <div class="notification-item">
+                  <label>
+                    <input type="checkbox" checked> SMS Notifications
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <label>
+                    <input type="checkbox" checked> Email Notifications
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <label>
+                    <input type="checkbox" checked> WhatsApp Notifications
+                  </label>
+                </div>
+                <div class="notification-item">
+                  <label>
+                    <input type="checkbox"> Marketing Promotions
+                  </label>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" onclick="saveNotificationSettings()">Save Preferences</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Tab -->
+        <div id="support-tab" class="tab-content">
+          <h2>💬 Support Center</h2>
+          <div class="support-options">
+            <div class="support-card">
+              <h3>📱 WhatsApp Support</h3>
+              <p>Chat with our support team on WhatsApp</p>
+              <button class="btn btn-primary" onclick="openWhatsAppSupport()">Open WhatsApp</button>
+            </div>
+            <div class="support-card">
+              <h3>📞 Call Support</h3>
+              <p>Speak directly to our support team</p>
+              <button class="btn btn-primary" onclick="callSupport()">Call Now</button>
+            </div>
+            <div class="support-card">
+              <h3>📧 Email Support</h3>
+              <p>Send us an email with your inquiry</p>
+              <button class="btn btn-primary" onclick="emailSupport()">Send Email</button>
+            </div>
+          </div>
+          
+          <div class="support-ticket">
+            <h3>Create Support Ticket</h3>
+            <form class="support-form">
+              <div class="form-group">
+                <label>Subject</label>
+                <select id="support-subject">
+                  <option>Order Issue</option>
+                  <option>Payment Problem</option>
+                  <option>Delivery Question</option>
+                  <option>Product Quality</option>
+                  <option>Account Issue</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Order Number (if applicable)</label>
+                <input type="text" id="support-order" placeholder="Enter order number">
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <textarea id="support-message" rows="4" placeholder="Describe your issue..."></textarea>
+              </div>
+              <button type="button" class="btn btn-primary" onclick="submitSupportTicket()">Submit Ticket</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .account-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .account-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: var(--black);
+  }
+
+  .account-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+  }
+
+  .account-sidebar {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .user-details h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--black);
+    font-size: 1.1rem;
+  }
+
+  .user-details p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  .account-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-item {
+    background: none;
+    border: none;
+    padding: 1rem;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 1rem;
+    color: var(--black);
+  }
+
+  .nav-item:hover {
+    background: var(--light-gray);
+  }
+
+  .nav-item.active {
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .account-content {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .tab-content h2 {
+    margin-bottom: 1.5rem;
+    color: var(--black);
+  }
+
+  /* Orders Tab */
+  .orders-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--white);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+  }
+
+  .order-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .order-number {
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  .order-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .status-delivered {
+    background: #e8f5e8;
+    color: var(--success);
+  }
+
+  .status-shipped {
+    background: #e3f2fd;
+    color: #2196f3;
+  }
+
+  .status-pending {
+    background: #fff3e0;
+    color: var(--warning);
+  }
+
+  /* Wallet Tab */
+  .wallet-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .wallet-card {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .wallet-card h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .balance-amount {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+
+  .balance-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .mpesa-number {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 1rem;
+  }
+
+  .transactions-list {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .transaction-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Returns Tab */
+  .returns-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Wishlist Tab */
+  .wishlist-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .wishlist-item {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  /* Settings Tab */
+  .settings-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .settings-section {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .settings-section h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-weight: 500;
+    color: var(--black);
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .notification-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .notification-item label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  /* Support Tab */
+  .support-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .support-card {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .support-card h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .support-card p {
+    margin-bottom: 1rem;
+    color: var(--gray);
+  }
+
+  .support-ticket {
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .support-ticket h3 {
+    margin-bottom: 1rem;
+    color: var(--black);
+  }
+
+  .support-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .account-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .account-sidebar {
+      position: static;
+    }
+
+    .account-nav {
+      flex-direction: row;
+      overflow-x: auto;
+    }
+
+    .nav-item {
+      white-space: nowrap;
+      min-width: 150px;
+    }
+
+    .orders-filters {
+      flex-direction: column;
+    }
+
+    .wallet-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .support-options {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Tab switching functionality
+  function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    
+    // Remove active class from all nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    
+    // Add active class to clicked nav item
+    event.target.classList.add('active');
+    
+    // Load tab-specific content
+    loadTabContent(tabName);
+  }
+
+  // Load tab-specific content
+  function loadTabContent(tabName) {
+    switch(tabName) {
+      case 'orders':
+        loadOrders();
+        break;
+      case 'wallet':
+        loadTransactions();
+        break;
+      case 'returns':
+        loadReturns();
+        break;
+      case 'wishlist':
+        loadWishlist();
+        break;
+    }
+  }
+
+  // Load orders
+  function loadOrders() {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const ordersList = document.getElementById('orders-list');
+    
+    if (orders.length === 0) {
+      ordersList.innerHTML = '<p>No orders found. <a href="/products">Start shopping!</a></p>';
+      return;
+    }
+    
+    ordersList.innerHTML = orders.map(order => `
+      <div class="order-item">
+        <div class="order-header">
+          <div class="order-number">Order #${order.id}</div>
+          <div class="order-status status-${order.status}">${order.status}</div>
+        </div>
+        <div class="order-details">
+          <p><strong>Total:</strong> ${order.total}</p>
+          <p><strong>Payment:</strong> ${order.paymentMethod}</p>
+          <p><strong>Date:</strong> ${new Date(order.date).toLocaleDateString()}</p>
+        </div>
+        <div class="order-actions">
+          <button class="btn btn-outline" onclick="viewOrderDetails(${order.id})">View Details</button>
+          <button class="btn btn-outline" onclick="trackOrder(${order.id})">Track Order</button>
+          <button class="btn btn-outline" onclick="downloadReceipt(${order.id})">Download Receipt</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Load transactions
+  function loadTransactions() {
+    const sampleTransactions = [
+      { date: '2024-01-15', type: 'payment', amount: '-2,750', description: 'Order #12345' },
+      { date: '2024-01-14', type: 'refund', amount: '+1,200', description: 'Refund for Order #12344' },
+      { date: '2024-01-13', type: 'topup', amount: '+5,000', description: 'Wallet Top-up' }
+    ];
+    
+    const transactionsList = document.getElementById('transactions-list');
+    transactionsList.innerHTML = sampleTransactions.map(transaction => `
+      <div class="transaction-item">
+        <div>
+          <div style="font-weight: 600;">${transaction.description}</div>
+          <div style="color: var(--gray); font-size: 0.9rem;">${transaction.date}</div>
+        </div>
+        <div style="font-weight: 600; color: ${transaction.amount.startsWith('+') ? 'var(--success)' : 'var(--error)'};">
+          KES ${transaction.amount}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Load returns
+  function loadReturns() {
+    const returnsList = document.getElementById('returns-list');
+    returnsList.innerHTML = '<p>No returns or refunds found.</p>';
+  }
+
+  // Load wishlist
+  function loadWishlist() {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const wishlistItems = document.getElementById('wishlist-items');
+    
+    if (wishlist.length === 0) {
+      wishlistItems.innerHTML = '<p>Your wishlist is empty. <a href="/products">Add some items!</a></p>';
+      return;
+    }
+    
+    wishlistItems.innerHTML = wishlist.map(item => `
+      <div class="wishlist-item">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">${item.image}</div>
+        <div style="font-weight: 600; margin-bottom: 0.5rem;">${item.title}</div>
+        <div style="color: var(--primary); font-weight: bold; margin-bottom: 1rem;">${item.price}</div>
+        <button class="btn btn-primary" onclick="addToCartFromWishlist(${item.id})">Add to Cart</button>
+      </div>
+    `).join('');
+  }
+
+  // Filter orders
+  function filterOrders(status) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // In a real app, this would filter the orders
+    loadOrders();
+  }
+
+  // Support functions
+  function openWhatsAppSupport() {
+    window.open('https://wa.me/254700123456?text=Hello, I need help with my order', '_blank');
+  }
+
+  function callSupport() {
+    alert('📞 Call us at: +254 700 123 456');
+  }
+
+  function emailSupport() {
+    window.open('mailto:support@shoplocal.co.ke');
+  }
+
+  function submitSupportTicket() {
+    const subject = document.getElementById('support-subject').value;
+    const order = document.getElementById('support-order').value;
+    const message = document.getElementById('support-message').value;
+    
+    if (!message.trim()) {
+      alert('Please enter your message');
+      return;
+    }
+    
+    alert('✅ Support ticket submitted successfully!\n\nWe will get back to you within 2 hours.');
+    
+    // Clear form
+    document.getElementById('support-order').value = '';
+    document.getElementById('support-message').value = '';
+  }
+
+  // Wallet functions
+  function topUpWallet() {
+    const amount = prompt('Enter amount to top up (KES):');
+    if (amount && !isNaN(amount) && amount > 0) {
+      alert(`📱 M-Pesa STK Push sent for KES ${amount}`);
+    }
+  }
+
+  function withdrawFunds() {
+    const amount = prompt('Enter amount to withdraw (KES):');
+    if (amount && !isNaN(amount) && amount > 0) {
+      alert(`💰 Withdrawal of KES ${amount} processed to your M-Pesa`);
+    }
+  }
+
+  function updateMPesaNumber() {
+    const number = prompt('Enter new M-Pesa number:');
+    if (number) {
+      alert('✅ M-Pesa number updated successfully!');
+    }
+  }
+
+  // Settings functions
+  function savePersonalInfo() {
+    alert('✅ Personal information saved successfully!');
+  }
+
+  function changePassword() {
+    const current = document.getElementById('current-password').value;
+    const newPass = document.getElementById('new-password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    
+    if (!current || !newPass || !confirm) {
+      alert('Please fill in all password fields');
+      return;
+    }
+    
+    if (newPass !== confirm) {
+      alert('New passwords do not match');
+      return;
+    }
+    
+    alert('✅ Password changed successfully!');
+    
+    // Clear form
+    document.getElementById('current-password').value = '';
+    document.getElementById('new-password').value = '';
+    document.getElementById('confirm-password').value = '';
+  }
+
+  function saveNotificationSettings() {
+    alert('✅ Notification preferences saved!');
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', function() {
+    loadTabContent('orders');
+  });
+</script>

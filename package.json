@@ -1,6 +1,6 @@
 {
-  "name": "@example/starter",
-  "version": "0.0.1",
+  "name": "shein-style-shopping-app",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
@@ -8,10 +8,22 @@
     "build": "astro build",
     "preview": "astro preview"
   },
-  "devDependencies": {
+  "dependencies": {
     "@astrojs/preact": "^1.0.2",
     "@astrojs/sitemap": "^1.0.0",
     "@netlify/netlify-marketing-tokens": "^1.1.0",
-    "astro": "^2.0.0"
+    "astro": "^2.0.0",
+    "axios": "^1.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.0",
+    "date-fns": "^2.30.0",
+    "lucide-react": "^0.263.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/uuid": "^9.0.0",
+    "typescript": "^5.0.0"
   }
 }
